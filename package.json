@@ -1,15 +1,19 @@
 {
   "name": "video_application",
   "version": "1.0.0",
+  "type": "module",
   "description": "It is full stack video streaming application",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "dev": "nodemon src/index.js"
   },
   "keywords": [
     "node",
     "flutter"
   ],
   "author": "Faizan khan",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.1.3"
+  }
 }
