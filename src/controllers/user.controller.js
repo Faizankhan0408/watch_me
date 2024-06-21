@@ -19,7 +19,9 @@ const registerUser = asyncHandler(async (req, res) => {
   console.log("email:", email);
 
   if (
-    [fullname, email, username, password].some(
+    [
+        fullname, email, username, password
+    ].some(
       (value, index, array) => value?.trim() === ""
     )
   ) {
@@ -58,16 +60,14 @@ const registerUser = asyncHandler(async (req, res) => {
     username:username.toLowerCase()
   })
 
-  const createdUser = await User.findById(user._id).select({
-    "-password -refreshToken"
-  })
+  const createdUser = await User.findById(user._id).select('-password -refreshToken');
 
   if(!createdUser){
     throw new ApiError(500,"Something went wrong will registering the user")
   }
 
   return res.status(201).json(
-    new ApiResponse(200,"User registered Successfully")
+    new ApiResponse(200,createdUser,"User registered Successfully")
   )
 
 });
