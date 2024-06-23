@@ -45,7 +45,7 @@ const registerUser = asyncHandler(async (req, res) => {
      throw new ApiError(400, "All fields are required");
   }
 
-  const existedUser = User.findOne({
+  const existedUser =await User.findOne({
     $or: [{ username }, { email }],
   });
 
@@ -77,13 +77,9 @@ const registerUser = asyncHandler(async (req, res) => {
     username:username.toLowerCase()
   })
 
-<<<<<<< HEAD
-  const createdUser = await User.findById(user._id).select('-password -refreshToken');
-=======
   const createdUser = await User.findById(user._id).select(
     "-password -refreshToken"
   )
->>>>>>> 2ad4ec3 (User log and register working done)
 
   if(!createdUser){
     throw new ApiError(500,"Something went wrong will registering the user")
@@ -96,7 +92,7 @@ const registerUser = asyncHandler(async (req, res) => {
 });
 
 
-const login=asyncHandler(async(request,response)=>{
+const loginUser=asyncHandler(async(request,response)=>{
   
 //get username and email
 //validate user
@@ -134,4 +130,30 @@ const login=asyncHandler(async(request,response)=>{
    return response.status(200).cookie("accessToken",accessToken,options).cookie("refreshToken",refreshToken,options).json(new ApiResponse(200,{user:loggedInUser,accessToken,refreshToken},"Logged in successfully"))
 })
 
-export { registerUser ,login};
+
+const logoutUser=asyncHandler(async(req,res)=>{
+    User.findByIdAndUpdate(
+      req.user._id,
+      {
+        $set:{
+          refreshToken:undefined
+        }
+      },{
+        new:true
+      }
+    )
+
+
+    const options={
+      httpOnly:true,
+      secure:true
+    }
+
+    return res
+    .status(200)
+    .clearCookie("accessToken",options)
+    .clearCookie("refreshToken",options)
+    .json(new ApiResponse(200,{},"User logged out successfully"))
+})
+
+export { registerUser ,loginUser,logoutUser};
